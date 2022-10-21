@@ -1,0 +1,47 @@
+version: '3.2'
+services:
+  redis-server:
+    image: redis/redis-stack:latest
+    hostname: redis-server
+    container_name: redis-server
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379
+      - 8001:8001
+
+  # cache uses a different image to minimize resource consumption as it is less likely to be viewed (though view may be helpful for debug)
+  redis-server-cache:
+    image: redis/redis-stack-server:latest
+    hostname: redis-server-cache
+    container_name: redis-server-cache
+    volumes:
+      - redis-data-cache:/data
+    ports:
+     - 6380:6379
+    #  - 8002:8001
+    environment:
+      # https://redis.io/docs/manual/eviction/
+      REDIS_ARGS: "--maxmemory 5mb --maxmemory-policy allkeys-lru"
+
+  app:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.run
+    container_name: fastapi
+    entrypoint: ["uvicorn", "app.main:app"]
+    depends_on:
+      - redis-server
+      - redis-server-cache
+    volumes:
+      - ./src/app:/src:ro # read-only to avoid those nasty __pycache__ folders
+    ports:
+      - 8000:8000
+    environment:
+      REDIS_OM_URL: "redis://redis-server:6379/0"
+      REDIS_CACHE_URL: "redis://redis-server-cache:6380/0"
+
+
+volumes:
+  redis-data:
+  redis-data-cache:

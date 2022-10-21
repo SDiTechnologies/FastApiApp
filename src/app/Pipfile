@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+praw = "*"
+psaw = "*"
+ipython = "*"
+asyncpraw = "*"
+pandas = "*"
+redis = {extras = ["hiredis"], version = "*"}
+redis-om = "*"
+greenstalk = "*"
+aiostalk = "*"
+pydantic = {extras = ["email"], version = "*"}
+fastapi = "*"
+starlette = "*"
+uvicorn = "*"
+aioredis = "*"
+fastapi-cache2 = "*"
+faker = "*"
+factory-boy = "*"
+httpie = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
