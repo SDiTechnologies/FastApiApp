@@ -19,6 +19,15 @@ database = get_redis_connection(url=REDIS_DATA_URL, decode_responses=True)
 # r = aioredis.from_url(REDIS_CACHE_URL, encoding='utf8', decode_responses=True)
 # FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
 
+SMTP_CREDENTIALS = {
+    "host": environ.get("SMTP_HOST"),
+    "port": environ.get("SMTP_PORT"),
+    "username": environ.get("SMTP_USERNAME"),
+    "password": environ.get("SMTP_PASSWORD"),
+    "tls": environ.get("SMTP_TLS"),
+    "ssl": environ.get("SMTP_SSL"),
+}
+
 
 async def get_token_header(x_token: str = Header()):
     if x_token != "fake-token":

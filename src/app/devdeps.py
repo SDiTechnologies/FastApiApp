@@ -1,19 +1,20 @@
 from json import dumps, loads
 from requests import Session
 
+import asyncio
 import aioredis
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
 from redis_om import Migrator, get_redis_connection
 
-from app.dependencies import REDIS_CACHE_URL, REDIS_DATA_URL
+from app.dependencies import REDIS_CACHE_URL, REDIS_DATA_URL, SMTP_CREDENTIALS
 
 from app.models.Customers import FakeCustomer, Customer
 from app.models.Recipes import FakeRecipe, Recipe
 
 
-from app.models.Emails import Email, FakeEmail
+from app.models.Emails import Email, SmtpHandler, FakeEmail
 
 # from app.models.Accounts import Account, AccountTransaction, FakeAccount
 from app.models.Accounts import (
@@ -24,6 +25,7 @@ from app.models.Accounts import (
     AccountTransaction,
     FakeAccount,
 )
+
 
 url = "http://localhost:8000/"
 
@@ -46,4 +48,13 @@ FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
 fc = FakeCustomer()
 fc.join_date = fc.join_date.strftime("%Y-%m-%d")
 
+smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
+
+# create indices for terminal python session
 Migrator().run()
+
+
+# def run_async(func):
+#     loop = asyncio.get_event_loop()
+#     loop.run_until_complete(asyncio.gather(func))
+#     loop.close()

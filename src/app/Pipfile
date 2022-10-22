@@ -22,6 +22,7 @@ fastapi-cache2 = "*"
 faker = "*"
 factory-boy = "*"
 httpie = "*"
+aiosmtplib = "*"
 
 [dev-packages]
 

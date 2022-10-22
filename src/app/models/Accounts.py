@@ -140,12 +140,12 @@ class FakeAccount(factory.Factory):
     owner = FakeOwner()
 
 
-# # TODO: these should be declared once accounts exist, NOT simultaneously
-# class AccountTransaction(BaseModel):
-#     # payor_id: str
-#     payor: Account
-#     # payee_id: str
-#     payee: Account
-#     amount: float = Field(index=True)
-#     created: datetime.date = Field(index=True)
-#     posted: datetime.date = Field(index=True)
+# TODO: these should be declared once accounts exist, NOT simultaneously
+class FakeAccountTransaction(BaseModel):
+    # payor_id: str
+    # payor: Account
+    # payee_id: str
+    # payee: Account
+    amount: float = Field(index=True)
+    created: datetime.date = Field(index=True)
+    posted: datetime.date = Field(index=True)

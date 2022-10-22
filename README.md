@@ -13,8 +13,29 @@ https://httpie.io/docs/cli/empty-headers-and-header-un-setting
 
 https://redis.io/docs/manual/eviction/
 https://redis.io/docs/manual/config/
-https://fastapi.tiangolo.com/tutorial/bigger-applications/ -->
+https://fastapi.tiangolo.com/tutorial/bigger-applications/
+https://fastapi.tiangolo.com/advanced/async-sql-databases/
 
+
+https://github.com/aio-libs
+
+
+# next!
+https://fastapi.tiangolo.com/tutorial/sql-databases/
+-->
+
+<!-- Notes concerning this project for anticipated expansion and porting to c#:
+
+    Overview of building a C# app that creates redis instances from sql-server db
+
+    Choose an appropriate point in your application life cycle style to load your data for caching.
+    Write C# code to access your SQL Server and pull the data you wish to cache.
+    Use the Redis API to store this data in Redis.
+    Make all access to this data use the Redis API.
+    Handle a cache miss i.e. when the expected data isn't present.
+    Implement a cache refresh mechanism to ensure data is updated when required.
+
+ -->
 
 <!-- Informal collection of process notes for later reference when extending anticipated features -->
 
