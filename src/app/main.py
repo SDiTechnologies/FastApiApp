@@ -11,6 +11,7 @@ from fastapi_cache.backends.redis import RedisBackend
 from redis_om import Migrator
 
 from app.dependencies import REDIS_DATA_URL, REDIS_CACHE_URL
+from app.data import seeder
 
 
 app = FastAPI(
@@ -47,6 +48,9 @@ async def startup():
 
     # create data indices if not exist
     Migrator().run()
+
+    # seed data =)
+    seeder.seed_data()
 
     # # You can set the Redis OM URL using the REDIS_OM_URL environment
     # # variable, or by manually creating the connection using your model's

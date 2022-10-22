@@ -23,16 +23,14 @@ class OwnerDetail(DerivedModel):
     kba: str
     weight: float
     height: float
-    # address: Address
 
 
 # seperated for confidentiality (leaner models + less hashing, encryption/decryption == less computing resources required)
 class Owner(DerivedModel):
     fname: str = Field(index=True)
     lname: str = Field(index=True)
-    owner_detail: OwnerDetail
-    # account: Account
-    address: Address
+    owner_detail: OwnerDetail = Field(index=True)
+    address: Address = Field(index=True)
 
 
 class Account(BaseModel):
@@ -41,13 +39,13 @@ class Account(BaseModel):
     created: datetime.date = Field(index=True)
     accessed: datetime.date = Field(index=True)
     modified: datetime.date = Field(index=True)
-    owner: Owner
+    owner: Owner = Field(index=True)
 
 
 class AccountTransaction(BaseModel):
-    payor_id: str
+    payor_id: str = Field(index=True)
     # payor: Account
-    payee_id: str
+    payee_id: str = Field(index=True)
     # payee: Account
     amount: float = Field(index=True)
     created: datetime.date = Field(index=True)
@@ -106,7 +104,6 @@ class FakeOwnerDetail(factory.Factory):
     )
     weight = random.uniform(110.0, 225.0)
     height = random.uniform(52.0, 72.5)
-    # address = FakeAddress()
 
 
 class FakeOwner(factory.Factory):

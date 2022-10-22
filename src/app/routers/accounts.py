@@ -6,7 +6,7 @@ from fastapi_cache.decorator import cache
 
 from redis_om import NotFoundError
 
-from app.models.Accounts import Account, Owner, OwnerDetail, Address
+from app.models.Accounts import Account, AccountTransaction, Owner, OwnerDetail, Address
 
 router = APIRouter(
     prefix="/accounts",
@@ -41,19 +41,27 @@ async def get_account(pk: str, request: Request, response: Response):
 #############################################################
 
 
-@router.get("/owners")
-async def get_owners(request: Request, response: Response):
-    # return {"accounts": Account.all_pks()}
-    return {"owners": Owner.find().all()}
+@router.get("/transactions")
+async def get_account_transactions(request: Request, response: Response):
+    return {"account_transactions": AccountTransaction.find().all()}
 
 
-@router.get("/owners/{pk}")
-@cache()
-async def get_owner(pk: str, request: Request, response: Response):
-    try:
-        return Owner.get(pk)
-    except NotFoundError:
-        raise HTTPException(status_code=404, detail="Owner not found")
+#############################################################
+
+
+# @router.get("/owners")
+# async def get_owners(request: Request, response: Response):
+#     # return {"accounts": Account.all_pks()}
+#     return {"owners": Owner.find().all()}
+
+
+# @router.get("/owners/{pk}")
+# @cache()
+# async def get_owner(pk: str, request: Request, response: Response):
+#     try:
+#         return Owner.get(pk)
+#     except NotFoundError:
+#         raise HTTPException(status_code=404, detail="Owner not found")
 
 
 #############################################################
