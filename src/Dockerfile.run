@@ -4,9 +4,9 @@ FROM python:latest AS run
 RUN apt-get update && \
     apt-get upgrade -y;
 
-RUN pip install --upgrade pip
+# RUN pip install --upgrade pip
 
 WORKDIR /src
 COPY ./requirements.txt /src
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
