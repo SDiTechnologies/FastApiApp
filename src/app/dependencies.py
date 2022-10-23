@@ -11,6 +11,8 @@ from redis_om import get_redis_connection
 # from app.models.Constants import REDIS_DATA_URL, REDIS_CACHE_URL
 from app.data.constants import REDIS_DATA_URL, REDIS_CACHE_URL, SMTP_CREDENTIALS
 
+### NO, NO, NO!!! Stop trying to make circular dependencies work!!
+# from app.models.Emails import SmtpHandler, Email
 database = get_redis_connection(url=REDIS_DATA_URL, decode_responses=True)
 # r = aioredis.from_url(REDIS_CACHE_URL, encoding='utf8', decode_responses=True)
 # FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")

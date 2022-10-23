@@ -48,14 +48,18 @@ class SmtpHandler:
     def from_dict(obj: Any) -> "SmtpHandler":
         _host = str(obj.get("host"))
         _port = int(obj.get("port"))
-        _username = str(obj.get("username"))
-        _password = str(obj.get("password"))
+        _username = (
+            str(obj.get("username")) if obj.get("username") is not None else None
+        )
+        _password = (
+            str(obj.get("password")) if obj.get("password") is not None else None
+        )
         _tls = bool(obj.get("tls"))
         _ssl = bool(obj.get("ssl"))
 
         return SmtpHandler(_host, _port, _username, _password, _tls, _ssl)
 
-    def send_sync(self, email: Email) -> bool:
+    def send(self, email: Email) -> bool:
         result = False
         try:
             if email:
@@ -75,7 +79,14 @@ class SmtpHandler:
                 # contact smtp server
                 with smtplib.SMTP(host=self.host, port=self.port) as conn:
                     conn.set_debuglevel(True)
-                    # conn.login(self.username, self.password)
+                    print(f"{self.username} {type(self.password)}")
+                    if self.username:
+                        try:
+                            conn.login(self.username, self.password)
+                        except Exception as e:
+                            print(
+                                f"Unable to login with provided credentials: {e} {print_exc()}"
+                            )
                     try:
                         conn.send_message(msg)
                         result = True
@@ -83,65 +94,56 @@ class SmtpHandler:
                         # conn.send_message(msg, msg['From'], msg['To'])
                     except Exception as e:
                         print(f"{e}: {print_exc()}")
-                    # finally:
-                    #     conn.quit()
-
-                # potential redundant declaration self.ssl, self.tls
-
-                # smtp = smtplib.SMTP(host=self.host, port=self.port)
-
-                # if self.tls:
-                #     smtp.starttls()
-                # if bool(self.username):
-                #     smtp.login(self.username, self.password)
-                # smtp.send_message(msg)
-                # smtp.quit()
 
                 # # TODO: mark email as sent and proceed...
             else:
-                raise Exception("No Email Object Provided")
+                raise Exception("Email Object Not Provided")
         except Exception as e:
             print(f"{e} {print_exc()}")
         finally:
             return result
 
-    async def send(self, email: Email):
-        try:
-            print(f"Entering Asynchronous send method")
-            print(f"current object: {self.__dict__}")
-            if email:
-                # prepare message
-                msg = MIMEMultipart()
-                msg.preamble = email.subject
-                msg["Subject"] = email.subject
-                msg["From"] = email.from_addr
-                msg["To"] = ", ".join(email.to_addr)
-                if len(email.to_cc):
-                    msg["Cc"] = ", ".join(email.to_cc)
-                if len(email.to_bcc):
-                    msg["Bcc"] = ", ".join(email.to_bcc)
+    # async def send(self, email: Email):
+    #     result = False
+    #     try:
+    #         print(f"Entering Asynchronous send method")
+    #         print(f"current object: {self.__dict__}")
+    #         if email:
+    #             # prepare message
+    #             msg = MIMEMultipart()
+    #             msg.preamble = email.subject
+    #             msg["Subject"] = email.subject
+    #             msg["From"] = email.from_addr
+    #             msg["To"] = ", ".join(email.to_addr)
+    #             if len(email.to_cc):
+    #                 msg["Cc"] = ", ".join(email.to_cc)
+    #             if len(email.to_bcc):
+    #                 msg["Bcc"] = ", ".join(email.to_bcc)
 
-                msg.attach(MIMEText(email.message, email.content_type, "utf-8"))
+    #             msg.attach(MIMEText(email.message, email.content_type, "utf-8"))
 
-                # contact smtp server
-                # potential redundant declaration self.ssl, self.tls
-                # potential error in asyncSMTP instantiation
-                smtp = aiosmtplib.SMTP(
-                    hostname=self.host, port=self.port, use_tls=self.ssl
-                )
+    #             # contact smtp server
+    #             # potential redundant declaration self.ssl, self.tls
+    #             # potential error in asyncSMTP instantiation
+    #             smtp = aiosmtplib.SMTP(
+    #                 hostname=self.host, port=self.port, use_tls=self.ssl
+    #             )
 
-                # if self.tls:
-                #     await smtp.starttls()
-                # if bool(self.username):
-                #     await smtp.login(self.username, self.password)
-                await smtp.send_message(msg)
-                await smtp.quit()
+    #             # if self.tls:
+    #             #     await smtp.starttls()
+    #             # if bool(self.username):
+    #             #     await smtp.login(self.username, self.password)
+    #             await smtp.send_message(msg)
+    #             result = True
+    #             await smtp.quit()
 
-                # TODO: mark email as sent and proceed...
-            else:
-                raise Exception("No Email Object Provided")
-        except Exception as e:
-            print(f"{e} {print_exc()}")
+    #             # TODO: mark email as sent and proceed...
+    #         else:
+    #             raise Exception("No Email Object Provided")
+    #     except Exception as e:
+    #         print(f"{e} {print_exc()}")
+    #     finally:
+    #         return result
 
 
 # class FakeEmailRecipients(factory.Factory):

@@ -1,10 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from starlette.requests import Request
 from starlette.responses import Response
 
 from fastapi_cache.decorator import cache
 
 from redis_om import NotFoundError
+
+from traceback import print_exc
 
 # from app.dependencies import smtpHandler
 from app.dependencies import SMTP_CREDENTIALS
@@ -15,6 +17,21 @@ router = APIRouter(
     prefix="/emails",
     tags=["emails"],
 )
+
+
+def send_smtp_message(email: Email, log=True):
+    # create handler
+    smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
+    try:
+        smtpHandler.send(email)
+    except Exception as e:
+        print(f"{e} {print_exc()}")
+
+    # DEBUG code
+    if log:
+        with open("logs.txt", mode="a") as email_file:
+            content = f"{email.__dict__}"
+            email_file.write(content)
 
 
 @router.post("/new")
@@ -55,14 +72,15 @@ async def patch_email(pk: str, email: Email, request: Request, response: Respons
 
 # try sending an email by url; we're not going to arbitrarily allow this feature directly though
 @router.get("/{pk}/send")
-async def send_email(pk: str, request: Request, response: Response):
+async def send_email(
+    pk: str, background_tasks: BackgroundTasks, request: Request, response: Response
+):
     # TODO: multiple try clauses; try get pk -> NotFoundError, try sending email -> whatever error (timeout, connectionrefused, etc...)
     try:
         e = Email.get(pk)
-        smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
-        print(f"{smtpHandler.__dict__}")
-        # research on running async tasks within fastapi methods
-        smtpHandler.send_sync(e)
+        background_tasks.add_task(send_smtp_message, e)
+        # update the email status here!!!
+        return {"message": "Email sent"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Oh No it's bad!\n\n{e}")
 
