@@ -6,7 +6,10 @@ from fastapi_cache.decorator import cache
 
 from redis_om import NotFoundError
 
-from app.models.Emails import Email
+# from app.dependencies import smtpHandler
+from app.dependencies import SMTP_CREDENTIALS
+from app.models.Emails import Email, SmtpHandler
+
 
 router = APIRouter(
     prefix="/emails",
@@ -48,6 +51,20 @@ async def put_email(pk: str, email: Email, request: Request, response: Response)
 @router.patch("/{pk}")
 async def patch_email(pk: str, email: Email, request: Request, response: Response):
     pass
+
+
+# try sending an email by url; we're not going to arbitrarily allow this feature directly though
+@router.get("/{pk}/send")
+async def send_email(pk: str, request: Request, response: Response):
+    # TODO: multiple try clauses; try get pk -> NotFoundError, try sending email -> whatever error (timeout, connectionrefused, etc...)
+    try:
+        e = Email.get(pk)
+        smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
+        print(f"{smtpHandler.__dict__}")
+        # research on running async tasks within fastapi methods
+        smtpHandler.send_sync(e)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Oh No it's bad!\n\n{e}")
 
 
 # presume that we want to actually delete entries for now, but prepare a secondary method that modifies visibility

@@ -55,7 +55,8 @@ class SmtpHandler:
 
         return SmtpHandler(_host, _port, _username, _password, _tls, _ssl)
 
-    def send_sync(self, email: Email):
+    def send_sync(self, email: Email) -> bool:
+        result = False
         try:
             if email:
                 # prepare message
@@ -77,6 +78,7 @@ class SmtpHandler:
                     # conn.login(self.username, self.password)
                     try:
                         conn.send_message(msg)
+                        result = True
                         # conn.sendmail(email.from_addr, email.to_addr, msg.as_string())
                         # conn.send_message(msg, msg['From'], msg['To'])
                     except Exception as e:
@@ -100,9 +102,13 @@ class SmtpHandler:
                 raise Exception("No Email Object Provided")
         except Exception as e:
             print(f"{e} {print_exc()}")
+        finally:
+            return result
 
     async def send(self, email: Email):
         try:
+            print(f"Entering Asynchronous send method")
+            print(f"current object: {self.__dict__}")
             if email:
                 # prepare message
                 msg = MIMEMultipart()
@@ -124,10 +130,10 @@ class SmtpHandler:
                     hostname=self.host, port=self.port, use_tls=self.ssl
                 )
 
-                if self.tls:
-                    await smtp.starttls()
-                if bool(self.username):
-                    await smtp.login(self.username, self.password)
+                # if self.tls:
+                #     await smtp.starttls()
+                # if bool(self.username):
+                #     await smtp.login(self.username, self.password)
                 await smtp.send_message(msg)
                 await smtp.quit()
 
