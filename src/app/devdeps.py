@@ -16,6 +16,8 @@ from app.models.Recipes import FakeRecipe, Recipe
 
 from app.models.Emails import Email, SmtpHandler, FakeEmail
 
+from app.models.Sessions import ClientDevice, FakeClientDevice
+
 # # from app.models.Accounts import Account, AccountTransaction, FakeAccount
 # from app.models.Accounts import (
 #     Address,
