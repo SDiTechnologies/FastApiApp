@@ -16,15 +16,15 @@ from app.models.Recipes import FakeRecipe, Recipe
 
 from app.models.Emails import Email, SmtpHandler, FakeEmail
 
-# from app.models.Accounts import Account, AccountTransaction, FakeAccount
-from app.models.Accounts import (
-    Address,
-    OwnerDetail,
-    Owner,
-    Account,
-    AccountTransaction,
-    FakeAccount,
-)
+# # from app.models.Accounts import Account, AccountTransaction, FakeAccount
+# from app.models.Accounts import (
+#     Address,
+#     OwnerDetail,
+#     Owner,
+#     Account,
+#     AccountTransaction,
+#     FakeAccount,
+# )
 
 
 url = "http://localhost:8000/"
@@ -45,8 +45,10 @@ r = aioredis.from_url(REDIS_CACHE_URL, encoding="utf8", decode_responses=True)
 FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
 
 
-fc = FakeCustomer()
-fc.join_date = fc.join_date.strftime("%Y-%m-%d")
+c = FakeCustomer()
+c.join_date = c.join_date.strftime("%Y-%m-%d")
+
+e = FakeEmail()
 
 smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
 

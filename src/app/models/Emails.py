@@ -76,7 +76,7 @@ class SmtpHandler:
 
                 # msg.attach(MIMEText(email.message, email.content_type, "utf-8"))
 
-                ## prepare simple message type
+                # # prepare simple message type
                 msg = MIMEText(email.message, email.content_type, "utf-8")
                 msg["Subject"] = email.subject
                 msg["From"] = email.from_addr
