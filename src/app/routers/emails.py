@@ -71,15 +71,16 @@ async def patch_email(pk: str, email: Email, request: Request, response: Respons
 
 
 # try sending an email by url; we're not going to arbitrarily allow this feature directly though
-@router.get("/{pk}/send")
+@router.post("/{pk}")
 async def send_email(
     pk: str, background_tasks: BackgroundTasks, request: Request, response: Response
 ):
-    # TODO: multiple try clauses; try get pk -> NotFoundError, try sending email -> whatever error (timeout, connectionrefused, etc...)
+    # TODO: multiple try clauses for more sophisticated error handling; try get pk -> NotFoundError, try sending email -> whatever error (timeout, connectionrefused, etc...)
     try:
         e = Email.get(pk)
         background_tasks.add_task(send_smtp_message, e)
         # update the email status here!!!
+        # TODO: migrate to use RabbitMQ?
         return {"message": "Email sent"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Oh No it's bad!\n\n{e}")

@@ -22,6 +22,7 @@ def seed_data():
 def create_set(obj: Any):
     if not set_exists(obj):
         n = random.randint(5, 15)
+        print(f"Creating {n} new object group sets: {str(obj)}")
         try:
             [obj().save() for i in range(n)]
         except Exception as e:

@@ -63,23 +63,28 @@ class SmtpHandler:
         result = False
         try:
             if email:
-                # prepare message
-                msg = MIMEMultipart()
-                msg.preamble = email.subject
+                # # prepare message: needs more testing in a live environment
+                # msg = MIMEMultipart()
+                # msg.preamble = email.subject
+                # msg["Subject"] = email.subject
+                # msg["From"] = email.from_addr
+                # msg["To"] = ", ".join(email.to_addr)
+                # if len(email.to_cc):
+                #     msg["Cc"] = ", ".join(email.to_cc)
+                # if len(email.to_bcc):
+                #     msg["Bcc"] = ", ".join(email.to_bcc)
+
+                # msg.attach(MIMEText(email.message, email.content_type, "utf-8"))
+
+                ## prepare simple message type
+                msg = MIMEText(email.message, email.content_type, "utf-8")
                 msg["Subject"] = email.subject
                 msg["From"] = email.from_addr
-                msg["To"] = ", ".join(email.to_addr)
-                if len(email.to_cc):
-                    msg["Cc"] = ", ".join(email.to_cc)
-                if len(email.to_bcc):
-                    msg["Bcc"] = ", ".join(email.to_bcc)
-
-                msg.attach(MIMEText(email.message, email.content_type, "utf-8"))
 
                 # contact smtp server
                 with smtplib.SMTP(host=self.host, port=self.port) as conn:
-                    conn.set_debuglevel(True)
-                    print(f"{self.username} {type(self.password)}")
+                    conn.set_debuglevel(False)
+                    # print(f"{self.username} {type(self.password)}")
                     if self.username:
                         try:
                             conn.login(self.username, self.password)
@@ -88,10 +93,11 @@ class SmtpHandler:
                                 f"Unable to login with provided credentials: {e} {print_exc()}"
                             )
                     try:
-                        conn.send_message(msg)
-                        result = True
-                        # conn.sendmail(email.from_addr, email.to_addr, msg.as_string())
+                        # # use send_message for MIMEMultipart
+                        # conn.send_message(msg)
+                        conn.sendmail(email.from_addr, email.to_addr, msg.as_string())
                         # conn.send_message(msg, msg['From'], msg['To'])
+                        result = True
                     except Exception as e:
                         print(f"{e}: {print_exc()}")
 
@@ -162,7 +168,7 @@ class FakeEmail(factory.Factory):
     to_bcc = []
     # recipients = [fake.ascii_free_email() for x in range(randint(1,5))]
     content_type = factory.Faker(
-        "random_element", elements=("text/plain", "text/html", "multipart/alternative")
+        "random_element", elements=("plain", "html")  # text multipart/alternative
     )
     subject = factory.Faker("paragraph", nb_sentences=1)
     message = factory.Faker("paragraph", nb_sentences=randint(2, 7))

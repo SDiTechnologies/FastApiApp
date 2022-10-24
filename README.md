@@ -2,6 +2,8 @@
 
 An exploration of rapid development using FastAPI + Redis + uvicorn + Docker + docker compose.
 
+<!-- https://medium.com/cuddle-ai/async-architecture-with-fastapi-celery-and-rabbitmq-c7d029030377 -->
+
 <!-- https://pypi.org/project/fastapi/
 https://www.datacamp.com/tutorial/introduction-fastapi-tutorial
 https://www.c-sharpcorner.com/article/getting-started-with-fastapi/
