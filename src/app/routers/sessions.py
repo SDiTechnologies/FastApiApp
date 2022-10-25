@@ -164,7 +164,3 @@ async def get_speedtest(background_tasks: BackgroundTasks):
     # stdout, stderr = await proc.communicate()
 
     # return {'values': {'stdout': stdout, 'stderr': stderr}}
-
-
-# stdout: b'{"type":"result","timestamp":"2022-10-24T22:10:52Z","ping":{"jitter":0.649,"latency":8.272,"low":7.814,"high":9.027},"download":{"bandwidth":29702582,"bytes":207652963,"elapsed":7006,"latency":{"iqm":25.528,"low":13.488,"high":30.966,"jitter":2.319}},"upload":{"bandwidth":1329170,"bytes":15720936,"elapsed":11215,"latency":{"iqm":89.243,"low":3.653,"high":155.824,"jitter":24.453}},"packetLoss":0,"isp":"Cox Communications","interface":{"internalIp":"192.168.0.9","name":"eno1","macAddr":"EC:8E:B5:45:08:BE","isVpn":false,"externalIp":"98.161.213.187"},"server":{"id":16613,"host":"speedtest.rd.ph.cox.net","port":8080,"name":"Cox - Phoenix","location":"Phoenix, AZ","country":"United States","ip":"184.182.243.169"},"result":{"id":"95e17207-af79-43a0-b37b-82376cbf4870","url":"https://www.speedtest.net/result/c/95e17207-af79-43a0-b37b-82376cbf4870","persisted":true}}\n'
-# stderr: b''
