@@ -2,12 +2,10 @@ from typing import Any
 from dataclasses import dataclass
 from datetime import datetime
 
-# from pandas import DataFrame
-from pprint import pformat
 
-# from .Emails import SmtpHandler, Email
-# from .Loggers import Logger
-from app.models.Speedtests import SpeedtestResult
+##############################################################################
+## Speedtests
+##############################################################################
 
 
 @dataclass
@@ -158,9 +156,7 @@ class SpeedtestResponse:
         _download = Download.from_dict(obj.get("download"))
         _upload = Upload.from_dict(obj.get("upload"))
         _packet_loss = (
-            float(obj.get("packetLoss"))
-            if obj.get("packetLoss") is not None
-            else "NULL"
+            float(obj.get("packetLoss")) if obj.get("packetLoss") is not None else None
         )
         _isp = str(obj.get("isp"))
         _interface = Interface.from_dict(obj.get("interface"))
@@ -252,10 +248,9 @@ class SpeedtestResponse:
             "server_country": self.server.country,
             "server_ip": self.server.ip,
         }
-        # d = {k: [v] for k, v in data.items()}
-        d = {k: v for k, v in data.items()}
-        return d
-        # return DataFrame(d)
+        # DEBUG
+        [print(f"{k}: {v}: {type(v)}") for k, v in data.items()]
+        return data
 
 
 # Example Usage

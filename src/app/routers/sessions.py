@@ -1,70 +1,23 @@
 from fastapi import APIRouter, Header, BackgroundTasks
-import asyncio
-import ast
+
+# import asyncio
+# import ast
 
 from json import loads
 
-# from fastapi import Request
+# from fastapi import Request  # this 'MAY' refer to the same object as starlette.requests
 
 from starlette.requests import Request
 from starlette.responses import Response
 
 from app.models.Sessions import ClientDevice, RequestDetail
 
-from app.models.Speedtests import SpeedtestResult
-
-# not sure if this naming convention lacks clarity; for now all dataclass dumps that haven't been properly integrated will be found in the Classes module
-from app.models.Classes import SpeedtestResponse
-
-from traceback import print_exc
 
 router = APIRouter(
     prefix="/sessions",
     tags=["sessions"]
     # responses={404:}
 )
-
-
-async def perform_speedtest(log=True):
-    try:
-        # ## debug instance A - normal shell command
-        # proc = await asyncio.create_subprocess_exec('ls', '-sahl', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-
-        # stdout, stderr = await proc.communicate()
-
-        # print(f"type: {type(stdout)} value: {stdout}")
-
-        # decoded = stdout.decode('utf-8')
-        # print(f"{decoded}")
-
-        ## debug instance B - dict return shell command
-
-        # # command requires speedtest ookla cli tool installed on running machine
-        proc = await asyncio.create_subprocess_shell(
-            "speedtest -p no -f json",
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-
-        stdout, stderr = await proc.communicate()
-        # print(f"stdout: {stdout}\nstderr: {stderr}")
-
-        # some of the following operations may be unnecessary now that it uses json data
-        decoded_data = stdout.decode("utf-8")
-        json_data = loads(decoded_data)
-        # response_dict = ast.literal_eval(decoded_data)
-        # print(f"{repr(response_dict)}")
-        # print(f"{json_data}")
-
-        speedtest = SpeedtestResponse.from_dict(json_data)
-        results_dict = speedtest.to_dict()
-        results = SpeedtestResult.from_dict(results_dict)
-
-        results.save()
-
-    except Exception as e:
-        print(f"{e} {print_exc()}")
-
 
 # TODO: consider expanding to include other information: Server response headers and client submission headers; ip address; geolocation; provider?
 
@@ -86,11 +39,6 @@ async def read_session(
     request_dict.update(additional_detail)
 
     obj_dict = {"client-ip": request.client.host, "request-detail": request_dict}
-
-    # # this works, but there's gotta be a better way to instantiate...
-    # request_detail = RequestDetail(host=obj_dict.get('host'), accept_encoding=obj_dict.get('accept-encoding'), user_agent=obj_dict.get('user-agent'), content_type=obj_dict.get('content-type'), query_string=obj_dict.get('query-string'), http_method=obj_dict.get('http-method'))
-
-    # client_device = ClientDevice(client_ip=client_dict.get('client-ip'), request_detail=request_detail)
 
     try:
         # request_detail = RequestDetail.from_dict(obj_dict.get('request-detail'))
@@ -148,19 +96,3 @@ async def save_session(client_device: ClientDevice):
 @router.get("/all")
 async def read_sessions(request: Request):
     return {"sessions": ClientDevice.find().all()}
-
-
-##############################################################################
-## Speedtest
-##############################################################################
-@router.get("/speedtest")
-async def get_speedtest(background_tasks: BackgroundTasks):
-    background_tasks.add_task(perform_speedtest)
-    return {"message": "begin perform_speedtest"}
-
-    # # proc = await asyncio.create_subprocess_exec('ls', '-sahl', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-    # proc = await asyncio.create_subprocess_shell('speedtest -p no -f json', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-
-    # stdout, stderr = await proc.communicate()
-
-    # return {'values': {'stdout': stdout, 'stderr': stderr}}

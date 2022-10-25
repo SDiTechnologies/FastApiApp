@@ -1,20 +1,17 @@
 import datetime
 
-from typing import Optional, Any
+from typing import Any, Optional
 from redis_om import Field
 
-import factory
-
 from app.models.common import BaseModel
-
-from traceback import print_exc
 
 
 class SpeedtestResult(BaseModel):
     type: str = Field(index=True)
     timestamp: datetime.datetime = Field(index=True)
     isp: str = Field(index=True)
-    packet_loss: float = Field(index=True)
+    # is it an int, is it a float? What is it?
+    packet_loss: Optional[float]
     # ping
     ping_jitter: float = Field(index=True)
     ping_iqm: float = Field(index=True)
@@ -57,6 +54,8 @@ class SpeedtestResult(BaseModel):
     server_country: str = Field(index=True)
     server_ip: str = Field(index=True)
 
+    # TODO: Correct issue with conversion from dict to redis object instance; SpeedtestResult.find().all() yields [] when known instances exist
+    @staticmethod
     def from_dict(obj: Any) -> "SpeedtestResult":
         _type = obj.get("type")
         _timestamp = obj.get("timestamp")

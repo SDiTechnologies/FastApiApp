@@ -18,6 +18,8 @@ from app.models.Emails import Email, SmtpHandler, FakeEmail
 
 from app.models.Sessions import ClientDevice, FakeClientDevice
 
+from app.models.Speedtests import SpeedtestResult
+
 # # from app.models.Accounts import Account, AccountTransaction, FakeAccount
 # from app.models.Accounts import (
 #     Address,
@@ -51,6 +53,8 @@ c = FakeCustomer()
 c.join_date = c.join_date.strftime("%Y-%m-%d")
 
 e = FakeEmail()
+
+# sr = SpeedtestResult()
 
 smtpHandler = SmtpHandler.from_dict(SMTP_CREDENTIALS)
 

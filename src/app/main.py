@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 import aioredis
 from app.dependencies import get_query_token, get_token_header
 from app.internal import admin
-from app.routers import items, sessions, users, customers, emails
+from app.routers import items, sessions, speedtests, users, customers, emails
 
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -19,11 +19,17 @@ app = FastAPI(
 )
 
 
+# sample routes
 app.include_router(users.router)
 app.include_router(items.router)
-app.include_router(sessions.router)
 app.include_router(customers.router)
+
+# utility routes
+app.include_router(sessions.router)
+app.include_router(speedtests.router)
 app.include_router(emails.router)
+
+# admin routes; TODO: (go-thru)
 app.include_router(
     admin.router,
     prefix="/admin",
@@ -47,10 +53,10 @@ async def startup():
     FastAPICache.init(RedisBackend(r), prefix="fastapi-cache")
 
     # create data indices if not exist
-    Migrator().run()
+    # Migrator().run()
 
     # seed data =)
-    seeder.seed_data()
+    # seeder.seed_data()
 
     # # You can set the Redis OM URL using the REDIS_OM_URL environment
     # # variable, or by manually creating the connection using your model's
